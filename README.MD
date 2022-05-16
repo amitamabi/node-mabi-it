@@ -5,3 +5,6 @@
 
 # 声明
 本包极度不完善。
+
+# 感谢 
+[Cronfox制作的Snow 2.0加密算法实现](https://github.com/cronfox/snow2cipher)
