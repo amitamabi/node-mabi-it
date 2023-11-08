@@ -89,7 +89,7 @@ function decryptDataFromBuffer(buf, key) {
     let copiedKey = Uint8Array.prototype.slice.call(key);
     let s8key = new Int8Array(copiedKey.buffer); //Weird Mabinogi Cihper Call.
     let cipher = new SnowCipher({
-        key: s8key,
+        key: copiedKey,
         keySize: 128,
         ivTable: new Uint32Array([0x0, 0x0, 0x0, 0x0]),
     });

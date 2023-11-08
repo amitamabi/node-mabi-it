@@ -83,40 +83,6 @@ export class RawFileEntry{
     }
 }
 
-/*
-
-pub fn run_extract(fname: &str, output_folder: &str, filters: Vec<&str>) -> Result<(), Error> {
-    let fp = File::open(fname)?;
-    let mut rd = BufReader::new(fp);
-    let final_file_name = common::get_final_file_name(fname)?;
-    let header = common::read_header(&final_file_name, &mut rd).context("reading header failed")?;
-
-    common::validate_header(&header)?;
-    if header.version != 2 {
-        return Err(Error::msg(format!(
-            "header version {} not supported",
-            header.version
-        )));
-    }
-
-    let entries = common::read_entries(&final_file_name, &header, &mut rd)
-        .context("reading entries failed")?;
-    common::validate_entries(&entries)?;
-
-    let cur_pos = rd.seek(SeekFrom::Current(0))?;
-    let content_start_off = (cur_pos + 1023) & 0u64.wrapping_sub(1024);
-
-    let filters = make_regex(filters)?;
-
-    for ent in entries {
-        if filters.len() == 0 || filters.iter().any(|re| re.find(&ent.name).is_some()) {
-            extract_file(&mut rd, content_start_off, &ent, output_folder)
-                .context(format!("extracting {} failed", ent.name))?;
-        }
-    }
-    Ok(())
-}
-*/
 /**
  * Exacting All Files From Buffer.
  * @param filename - *.it File's filename.
@@ -127,7 +93,9 @@ export function exactFilesFromBuffer(filename:string,buf:Uint8Array):RawFileEntr
     let headerOffset = encryption.generateHeaderOffset(filename)
     let entryOffset = encryption.generateEntriesOffset(filename)
     let fileHeader = FileHeader.readEncryptHeader(filename,buf)
+    console.log(fileHeader)
     let entries = FileEntry.readEntries(filename,fileHeader,buf)
+    
     let currentPos = headerOffset + entryOffset + entries.reduce((a,b)=>a+b.toBuffer().byteLength,0)
     let contentStartOff = BigInt(currentPos + 1023) & BigInt.asUintN(64,(BigInt(0) - BigInt(1024)))//由于用了BigInt 平台支持可能会有问题。
     //console.log(contentStartOff)

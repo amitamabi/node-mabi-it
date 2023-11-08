@@ -27,6 +27,12 @@ class FileHeader {
         fh.fileCount = obj.fileCount;
         return fh;
     }
+    /**
+     *
+     * @param {string}name - filename
+     * @param {Uint8Array}buffer - origin file buffer
+     * @returns {FileHeader} This is Decoded File Header;
+     */
     static readEncryptHeader(filename, buffer) {
         let key = encryption.generateHeaderKey(filename);
         let headerOffset = encryption.generateHeaderOffset(filename);
@@ -34,7 +40,7 @@ class FileHeader {
         let buf = buffer.slice(cursor, cursor + 12);
         let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key);
         let header = FileHeader.fromBuffer(decryptedBuffer);
-        header.verify();
+        //header.verify()
         return header;
     }
     toBuffer() {
@@ -94,6 +100,13 @@ class FileEntry {
         entry.key = obj.key;
         return entry;
     }
+    /**
+    *
+    * @param {string}filename - filename
+    * @param {FileHeader}fileHeader - file header
+    * @param {Uint8Array}buffer - origin file buffer
+    * @returns {FileEntry[]} This is Decoded File Entries;
+    */
     static readEntries(filename, fileHeader, buffer) {
         let key = encryption.generateEntriesKey(filename);
         let headerOffset = encryption.generateHeaderOffset(filename);
@@ -104,6 +117,7 @@ class FileEntry {
         let fileEntryArray = [];
         for (let i = 0; i < fileHeader.fileCount; i++) {
             let entry = FileEntry.fromBuffer(decryptedBuffer.slice(cursor, decryptedBuffer.length));
+            console.log(entry);
             entry.verify();
             fileEntryArray.push(entry);
             cursor += entry.toBuffer().byteLength;

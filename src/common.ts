@@ -55,7 +55,7 @@ export class FileHeader {
         let buf = buffer.slice(cursor, cursor+12)
         let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key)
         let header = FileHeader.fromBuffer(decryptedBuffer)
-        header.verify()
+        //header.verify()
         return header
     }
     toBuffer():Uint8Array {
@@ -125,8 +125,8 @@ export class FileEntry{
     }
     /**
     * 
-    * @param {string}name - filename
-    * @param {FileHeader}header - file header
+    * @param {string}filename - filename
+    * @param {FileHeader}fileHeader - file header
     * @param {Uint8Array}buffer - origin file buffer
     * @returns {FileEntry[]} This is Decoded File Entries;
     */
@@ -140,8 +140,10 @@ export class FileEntry{
         let fileEntryArray = []
         for(let i=0;i<fileHeader.fileCount;i++){
             let entry = FileEntry.fromBuffer(decryptedBuffer.slice(cursor, decryptedBuffer.length))
+            console.log(entry)
             entry.verify()
             fileEntryArray.push(entry) 
+            
             cursor += entry.toBuffer().byteLength
         }
         return fileEntryArray

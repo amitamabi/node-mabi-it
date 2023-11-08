@@ -26,12 +26,30 @@ export function generateHeaderOffset(name:string):number {
 export function generateHeaderKey(name:string):Uint8Array{
 	let input = new Uint16Array((name.toLowerCase()+KEY_SALT).split("").map(c=>c.charCodeAt(0)))
 	let key = new Uint8Array(16);
+	let len = input.length
 	for (let i = 0; i < 16; i++) {
-		key[i] = input[i%input.length] + i;
+		//key[i] = input[i%input.length] + i;
+		key[i] = (i + (i%3+2) * input[len - 1 - i % len]) %256
 	}
 	return key
 }
 
+/**
+ * Genreate Key to Decrypt .it File Header.
+ * for newer version.
+ * @param {string}name - Just input the *.it file's filename;
+ * @returns {Uint8Array} This is Genreated Key;
+ */
+export function generateHeaderKeyv2(name:string):Uint8Array{
+	let input = new Uint16Array((name.toLowerCase()+KEY_SALT).split("").map(c=>c.charCodeAt(0)))
+	let key = new Uint8Array(16);
+	let len = input.length
+	for (let i = 0; i < 16; i++) {
+		//key[i] = input[i%input.length] + i;
+		key[i] = (i + (i%3+2) * input[len - 1 - i % len]) %256
+	}
+	return key
+}
 /**
  * Genreate Key to Decrypt .it File Entries.
  * @param {string}name - Just input the *.it file's filename;

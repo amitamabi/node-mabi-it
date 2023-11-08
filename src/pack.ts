@@ -23,7 +23,7 @@ function mergeUint8Array(arrays:Uint8Array[]){
  * @param {String} filename - output filename
  * @returns {Uint8Array}
  */
-export function packToNewBuffer(entries:RawFileEntry[],filename:string){
+export function packToNewBuffer(entries:RawFileEntry[],filename:string): Uint8Array{
     let headerOffset = encryption.generateHeaderOffset(filename)
     let entryOffset = encryption.generateEntriesOffset(filename)
     let headerKey = encryption.generateHeaderKey(filename)
