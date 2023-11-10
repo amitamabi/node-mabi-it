@@ -23,8 +23,8 @@ export function generateHeaderOffset(name:string):number {
  * @param {string}name - Just input the *.it file's filename;
  * @returns {Uint8Array} This is Genreated Key;
  */
-export function generateHeaderKey(name:string):Uint8Array{
-	let input = new Uint16Array((name.toLowerCase()+KEY_SALT).split("").map(c=>c.charCodeAt(0)))
+export function generateHeaderKey(name:string,keySalt:string = KEY_SALT):Uint8Array{
+	let input = new Uint16Array((name.toLowerCase()+keySalt).split("").map(c=>c.charCodeAt(0)))
 	let key = new Uint8Array(16);
 	for (let i = 0; i < 16; i++) {
 		key[i] = input[i%input.length] + i;
@@ -37,8 +37,8 @@ export function generateHeaderKey(name:string):Uint8Array{
  * @param {string}name - Just input the *.it file's filename;
  * @returns {Uint8Array} This is Genreated Key;
  */
-export function generateEntriesKey(name:string):Uint8Array{
-	let input = new Uint16Array((name.toLowerCase()+KEY_SALT).split("").map(c=>c.charCodeAt(0)))
+export function generateEntriesKey(name:string,keySalt:string = KEY_SALT):Uint8Array{
+	let input = new Uint16Array((name.toLowerCase()+keySalt).split("").map(c=>c.charCodeAt(0)))
 	let key = new Uint8Array(16);
 	let len = input.length
 	for (let i = 0; i < 16; i++) {

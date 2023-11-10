@@ -10,6 +10,10 @@ export declare class RawFileEntry {
      * @param {FileEntry} entry
      */
     static fromEncryptedPackedBuffer(buf: Uint8Array, startOff: number, entry: FileEntry): RawFileEntry;
+    /**
+     *  encode this file entry to encodedContent with flags
+     *
+     */
     convertBuffer(): void;
 }
 /**

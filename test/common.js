@@ -3,7 +3,7 @@ const common = require('../built/common');
 const assert = require('assert/strict');
 const fs = require('fs');
 function testReadHead(){
-    let key = encryption.generateHeaderKey("data_00000.it")
+    let key = encryption.generateHeaderKey("data_00000.it","@6QeTuOaDgJlZcBm#9")
     let ciphered_text = new Uint8Array([
         0x37, 0x62, 0x6D, 0x63, 0x82, 0x03, 0x09, 0xD0, 0x24, 0x73, 0xBE, 0xA9,
     ]);
@@ -47,6 +47,19 @@ function readEntriesFromFile(){
     console.log(JSON.stringify({entries},'\t'))
     //entries.map(e=>{console.log(`${e.name},${e.rawSize},${e.flags}`)})
 }
+
+function readEntriesFromFile1(){
+    let buffer = new Uint8Array(fs.readFileSync("./data_01009.it"))
+    let header = common.FileHeader.readEncryptHeader("data_01009.it",buffer)
+    console.log(header)
+    let entries = common.FileEntry.readEntries("data_01009.it",header,buffer,header.keySalt)
+    let size = entries.reduce((a,b)=>a+b.toBuffer().byteLength,0)
+    let a = entries.map(e=>e.name)
+    //console.log(a.join("\n"))
+    console.log(JSON.stringify({entries},'\t'))
+    //entries.map(e=>{console.log(`${e.name},${e.rawSize},${e.flags}`)})
+}
 testReadHead()
 
 readEntriesFromFile()
+readEntriesFromFile1()

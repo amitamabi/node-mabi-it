@@ -2,6 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileEntry = exports.FileHeader = void 0;
 const encryption = require("./encryption");
+const KEY_SALT_LIST = [
+    "3@6|3a[@<Ex:L=eN|g",
+    "CuAVPMZx:E96:(Rxdw",
+    "@6QeTuOaDgJlZcBm#9",
+    "DaXU_Vx9xy;[ycFz{1",
+    "}F33F0}_7X^;b?PM/;",
+    "C(K^x&pBEeg7A5;{G9",
+    "smh=Pdw+%?wk?m4&(y",
+    "xGqK]W+_eM5u3[8-8u",
+    "1&w2!&w{Q)Fkz4e&p0",
+    "})wWb4?-sVGHNoPKpc"
+];
 class FileHeader {
     static fromBuffer(buffer) {
         //input a uint8 arraybuffer
@@ -27,13 +39,20 @@ class FileHeader {
         fh.fileCount = obj.fileCount;
         return fh;
     }
+    /**
+     *
+     * @param {string}name - filename
+     * @param {Uint8Array}buffer - origin file buffer
+     * @returns {FileHeader} This is Decoded File Header;
+     */
     static readEncryptHeader(filename, buffer) {
-        let key = encryption.generateHeaderKey(filename);
         let headerOffset = encryption.generateHeaderOffset(filename);
-        let cursor = headerOffset;
-        let buf = buffer.slice(cursor, cursor + 12);
+        let keySalt = testKeySalt(filename, buffer);
+        let key = encryption.generateHeaderKey(filename, keySalt[0]);
+        let buf = buffer.slice(headerOffset, headerOffset + 12);
         let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key);
         let header = FileHeader.fromBuffer(decryptedBuffer);
+        header.keySalt = keySalt;
         header.verify();
         return header;
     }
@@ -94,10 +113,36 @@ class FileEntry {
         entry.key = obj.key;
         return entry;
     }
-    static readEntries(filename, fileHeader, buffer) {
-        let key = encryption.generateEntriesKey(filename);
+    /**
+    *
+    * @param {string}name - filename
+    * @param {FileHeader}header - file header
+    * @param {Uint8Array}buffer - origin file buffer
+    * @returns {FileEntry[]} This is Decoded File Entries;
+    */
+    static readEntries(filename, fileHeader, buffer, keySalt) {
         let headerOffset = encryption.generateHeaderOffset(filename);
         let entryOffset = encryption.generateEntriesOffset(filename);
+        let ks;
+        //test key salt array
+        if (fileHeader.keySalt) {
+            ks = fileHeader.keySalt.filter((ks) => {
+                let key = encryption.generateEntriesKey(filename, ks);
+                let buf = buffer.slice(headerOffset + entryOffset, headerOffset + entryOffset + 4096 - buffer.length % 4);
+                let cursor = 0;
+                let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key);
+                try {
+                    let entry = FileEntry.fromBuffer(decryptedBuffer.slice(cursor, decryptedBuffer.length));
+                    entry.verify();
+                    return true;
+                }
+                catch (e) {
+                    return false;
+                }
+            });
+            ks = ks[0];
+        }
+        let key = encryption.generateEntriesKey(filename, ks);
         let cursor = 0;
         let buf = buffer.slice(headerOffset + entryOffset, buffer.length - buffer.length % 4);
         let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key);
@@ -175,6 +220,37 @@ function bytesArrToBase64(arr) {
         result += r.join('');
     }
     return result;
+}
+function testKeySalt(filename, buffer) {
+    let keySalt = [];
+    let headerOffset = encryption.generateHeaderOffset(filename);
+    for (let index = 0; index < KEY_SALT_LIST.length; index++) {
+        const element = KEY_SALT_LIST[index];
+        let key = encryption.generateHeaderKey(filename, element);
+        let buf = buffer.slice(headerOffset, headerOffset + 12);
+        let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key);
+        let header = FileHeader.fromBuffer(decryptedBuffer);
+        try {
+            header.verify();
+            keySalt.push(element);
+        }
+        catch (e) {
+        }
+    }
+    // KEY_SALT_LIST.forEach((ks) => {
+    //     let headerOffset = encryption.generateHeaderOffset(filename)
+    //     let key = encryption.generateHeaderKey(filename, ks)
+    //     let buf = buffer.slice(headerOffset, headerOffset + 12)
+    //     let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key)
+    //     let header = FileHeader.fromBuffer(decryptedBuffer)
+    //     try {
+    //         header.verify()
+    //         console.log("Key Salt Found: " + ks)
+    //         return ks
+    //     } catch (e) {
+    //     }
+    // })
+    return keySalt;
 }
 module.exports = {
     FileHeader, FileEntry

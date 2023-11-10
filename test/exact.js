@@ -21,10 +21,10 @@ function bytesArrToBase64(arr) {
     return result;
 }
 function testExactFile() {
-    let buf = new Uint8Array(fs.readFileSync("./data_00000.it"))
+    let buf = new Uint8Array(fs.readFileSync("../mabitdown/download/package/data_00000.it"))
     let exacted = exact.exactFilesFromBuffer("data_00000.it", buf)
     //exacted.map(e => {console.log(e)})
-    console.log(exacted[0])
+    console.log(exacted)
     // fs.writeFileSync("./s.json",JSON.stringify(exacted,(thi,e)=>{
     //     if(e.constructor === Uint8Array){
     //         //return base64

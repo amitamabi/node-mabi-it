@@ -46,6 +46,10 @@ class RawFileEntry {
         rawFileEntry.content = contentBuffer;
         return rawFileEntry;
     }
+    /**
+     *  encode this file entry to encodedContent with flags
+     *
+     */
     convertBuffer() {
         let content = this.content.slice();
         let fileKey = encryption.generateFileKey(this.originalEntry.name, this.originalEntry.key);

@@ -11,13 +11,13 @@ export declare function generateHeaderOffset(name: string): number;
  * @param {string}name - Just input the *.it file's filename;
  * @returns {Uint8Array} This is Genreated Key;
  */
-export declare function generateHeaderKey(name: string): Uint8Array;
+export declare function generateHeaderKey(name: string, keySalt?: string): Uint8Array;
 /**
  * Genreate Key to Decrypt .it File Entries.
  * @param {string}name - Just input the *.it file's filename;
  * @returns {Uint8Array} This is Genreated Key;
  */
-export declare function generateEntriesKey(name: string): Uint8Array;
+export declare function generateEntriesKey(name: string, keySalt?: string): Uint8Array;
 /**
  * Genreate Offset to Decrypt .it File Entries.
  * @param {string}name - Just input the *.it file's filename;
