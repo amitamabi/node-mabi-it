@@ -34,12 +34,12 @@ function pack(){
         genetateRawFileEntry(FileEntry.fromObject({
             name:"data/color/ff.raw",
             offset:0,
-            originalSize:16,
+            originalSize:48,
             flags:7,
             rawSize:4,
             checksum:0,
             key:new Uint8Array([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
-        }),new Uint8Array([255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255]))
+        }),new Uint8Array([255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255]))
     ]
     let buf = packToNewBuffer(entries,filename)
     let fileHeader = FileHeader.readEncryptHeader(filename,buf)

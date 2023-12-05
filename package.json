@@ -1,6 +1,6 @@
 {
   "name": "node-mabi-it",
-  "version":"0.1.0",
+  "version":"0.1.1",
   "main": "./built/index.js",
   "exports": {
     ".":"./built/index.js",
