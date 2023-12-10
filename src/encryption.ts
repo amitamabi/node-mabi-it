@@ -97,9 +97,18 @@ export function decryptDataFromBuffer(buf:(Uint8Array|Buffer),key:Uint8Array):Ui
 	}else{
 		data= new Uint32Array(buf.buffer)
 	}
-	for(let i=0;i<data.length;i++){
+	for(let i=0;i<data.length;i+=16){
 		//Why Mabinogi use add/sub instead of xor? It can't to padding with 0x0. 
-		data[i] -= cipher.singleClock()
+		//data[i] -= cipher.singleClock()
+		let keystream = cipher.generateKeyStream()
+		//data[i] -= keystream[]
+		for(let j=0;j<16;j++){
+			if(i+j >= data.length){
+				break
+			}
+			data[i+j] -= keystream[j]
+		}
+
 	}
 	return new Uint8Array(data.buffer)
 }
