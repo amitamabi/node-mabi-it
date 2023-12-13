@@ -128,8 +128,7 @@ class FileEntry {
         if (fileHeader.keySalt) {
             ks = fileHeader.keySalt.filter((ks) => {
                 let key = encryption.generateEntriesKey(filename, ks);
-
-                let buf = buffer.slice(headerOffset + entryOffset, ((headerOffset + entryOffset+1024)>buffer.length?(buffer.length-buffer.length % 4):headerOffset + entryOffset+1024) );
+                let buf = buffer.slice(headerOffset + entryOffset, ((headerOffset + entryOffset + 1024) > buffer.length ? (buffer.length - buffer.length % 4) : headerOffset + entryOffset + 1024));
                 let cursor = 0;
                 let decryptedBuffer = encryption.decryptDataFromBuffer(buf, key);
                 try {

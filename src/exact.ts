@@ -21,7 +21,12 @@ export class RawFileEntry{
             HEAD_ENCRYPTED:entry.flags & FileEntry.FLAG_HEAD_ENCRYPTED,
             COMPRESSED:entry.flags & FileEntry.FLAG_COMPRESSED
         }
-
+        if(entry.rawSize == 0){
+            let rawFileEntry = new RawFileEntry()
+            rawFileEntry.originalEntry = entry
+            rawFileEntry.content = contentBuffer
+            return rawFileEntry
+        }
         if(fileFlag.ALL_ENCRYPTED !=0){
             let decryptedBuffer = encryption.decryptDataFromBuffer(buf.slice(cursor,cursor+contentBuffer.byteLength),key)
             contentBuffer.set(decryptedBuffer)
